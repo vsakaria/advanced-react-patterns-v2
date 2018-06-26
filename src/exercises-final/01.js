@@ -3,8 +3,12 @@ import {Switch} from '../switch'
 
 class Toggle extends React.Component {
   state = {on: false}
+
   toggle = () =>
+    //Use a this.setState callback function
     this.setState(
+      //Here {on} can be used in the updater because the currentState
+      //is passed as the value of the key in the first object argument.
       ({on}) => ({on: !on}),
       () => {
         this.props.onToggle(this.state.on)
