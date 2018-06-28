@@ -17,11 +17,20 @@ class Toggle extends React.Component {
   //    Note that they will _not_ have access to Toggle instance properties
   //    like `this.state.on` or `this.toggle`.
   state = {on: false}
-  toggle = () =>
+
+  static On = ({on, children}) => (on ? children : null)
+  static Off = ({on, children}) => (on ? null : children)
+  static Button = ({on, toggle}) => (
+    <Switch on={on} onClick={toggle} />
+  )
+
+  toggle = () => {
     this.setState(
       ({on}) => ({on: !on}),
       () => this.props.onToggle(this.state.on),
     )
+  }
+
   render() {
     // we're trying to let people render the components they want within the Toggle component.
     // But the On, Off, and Button components will need access to the internal `on` state as
@@ -33,8 +42,29 @@ class Toggle extends React.Component {
     // 2. React.cloneElement: https://reactjs.org/docs/react-api.html#cloneelement
     //
     // 🐨 you'll want to completely replace the code below with the above logic.
-    const {on} = this.state
-    return <Switch on={on} onClick={this.toggle} />
+    // const {on} = this.state
+    // return <Switch on={on} onClick={this.toggle} />
+
+    return React.Children.map(this.props.children, child =>
+      React.cloneElement(child, {
+        on: this.state.on,
+        toggle: this.toggle,
+      }),
+    )
+  }
+}
+
+class Images extends React.Component {
+  static Description = ({src, children}) =>
+    src ? children + ' ' + src : null
+  static Thumbnail = ({src, alt}) => <img alt={alt} src={src} />
+  render() {
+    return React.Children.map(this.props.children, child =>
+      React.cloneElement(child, {
+        src: this.props.src,
+        alt: this.props.alt,
+      }),
+    )
   }
 }
 
@@ -45,11 +75,21 @@ function Usage({
   onToggle = (...args) => console.log('onToggle', ...args),
 }) {
   return (
-    <Toggle onToggle={onToggle}>
-      <Toggle.On>The button is on</Toggle.On>
-      <Toggle.Off>The button is off</Toggle.Off>
-      <Toggle.Button />
-    </Toggle>
+    <div>
+      <Toggle onToggle={onToggle}>
+        <Toggle.On>The button is on</Toggle.On>
+        <Toggle.Button />
+        <Toggle.Off>The button is off</Toggle.Off>
+      </Toggle>
+
+      <Images
+        alt="some text"
+        src="http://via.placeholder.com/350x150"
+      >
+        <Images.Thumbnail />
+        <Images.Description>Hello fool</Images.Description>
+      </Images>
+    </div>
   )
 }
 Usage.title = 'Compound Components'
