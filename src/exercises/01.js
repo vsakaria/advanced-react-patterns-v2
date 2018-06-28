@@ -19,8 +19,9 @@ class Toggle extends React.Component {
   // You'll also want a method to handle when the switch is clicked
   // which will update the `on` state and call the `onToggle` prop
   render() {
+    const {on} = this.state
     // 🐨 here you'll want to return the switch with the `on` and `onClick` props
-    return <Switch on={this.state.on} onClick={this.handleToggle} />
+    return <Switch on={on} onClick={this.handleToggle} />
   }
 }
 
